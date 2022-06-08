@@ -1,41 +1,24 @@
-version: "3.1"
+version: "3.0"
 services:
   product:
-    image: mfolarin/org.foodres.microservice.user-v1.0.0-alpha
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    ports:
-      - 8080:8080
-    volumes:
-      - /data/org.foodres.microservice/product:/app/data
+    image: ${app_image}
     environment:
-      APP_PORT: 8080
-      DB_HOST: db
-      DB_NAME: foodres-msv-product
-      DB_PORT: 3306
-      DB_USER: root
-      DB_PASSWORD: sZNbqbWN7LT7LZq
-    depends_on:
-      - db
+      - app_port=${app_port}
+      - app_name=${app_name}
+      - db_host=${db_host}
+      - db_port=${db_port}
+      - db_name=${db_name}
+      - db_password=${db_password}
+      - db_user=${db_user}
     networks:
-      - db-net
-    container_name: org.foodres.microservice.product
-  db:
-    image: mysql:latest
-    restart: always
+      - ${db_net}
     ports:
-      - 8806:3306
-    networks:
-      - db-net
-    environment:
-      MYSQL_ROOT_PASSWORD: sZNbqbWN7LT7LZq
-      MYSQL_DATABASE: foodres-msv-product
-      # MYSQL_USER: boot-user
-      # MYSQL_PASSWORD: sZNbqbWN7LT7LZq
+      - ${app_port}:${app_port}
     volumes:
-      - /data/org.foodres.microservice/mysql:/var/lib/mysql
-    container_name: org.foodres.microservice.mysql
+      - /data/${app_group}/${app_artifact}:${app_storage}
+    # restart: always
+    container_name: ${app_group}-${app_artifact}
+
 networks:
-  db-net: 
-    driver: overlay
+  org.foodres.microservice.db.mysql:
+    external: true
