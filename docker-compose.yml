@@ -3,8 +3,10 @@ services:
   product:
     image: ${app_image}
     environment:
-      - app_port=${app_port}
       - app_name=${app_name}
+      - app_artifact=${app_artifact}
+      - app_port=${app_port}
+      - db_engine=${db_engine}
       - db_host=${db_host}
       - db_port=${db_port}
       - db_name=${db_name}
@@ -16,8 +18,8 @@ services:
       - ${app_port}:${app_port}
     volumes:
       - /data/${app_group}/${app_artifact}:${app_storage}
-    # restart: always
-    container_name: ${app_group}-${app_artifact}
+    restart: always
+    container_name: ${app_group}.${app_artifact}
 
 networks:
   org.foodres.microservice.db.mysql:
