@@ -1,26 +1,42 @@
-version: "3.0"
+version: "3.9"
 services:
-  product:
-    image: ${app_image}
+  org-foodres-microservice-be-product:
+    image: mfolarin/org.foodres.microservice:product-v0.0.1-alpha
     environment:
-      - app_name=${app_name}
-      - app_artifact=${app_artifact}
-      - app_port=${app_port}
-      - db_engine=${db_engine}
-      - db_host=${db_host}
-      - db_port=${db_port}
-      - db_name=${db_name}
-      - db_password=${db_password}
-      - db_user=${db_user}
+      - app_port=8080
+      - app_name=foodres application cluster product microservice
+      - app_artifact=product
+      - db_host=org-foodres-microservice-db-mysql-8
+      - db_port=3306
+      - db_name=foodres-msv-product
+      - db_password=sZNbqbWN7LT7LZq
+      - db_user=root
+      - db_engine=mysql
     networks:
-      - ${db_net}
+      - org-foodres-microservice-db
+      - org-foodres-microservice-be
+    labels:
+      - app.version=0.0.1-alpha
     ports:
-      - ${app_port}:${app_port}
+      - 8081:8080
     volumes:
-      - /data/${app_group}/${app_artifact}:${app_storage}
-    restart: always
-    container_name: ${app_group}.${app_artifact}
+      - org.foodres.microservice.be.product:/app/data
+    deploy:
+      replicas: 1
+      placement:
+        max_replicas_per_node: 3
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    container_name: org-foodres-microservice-be-product
 
+volumes:
+  org.foodres.microservice.be.product:
+    external: true
 networks:
-  org.foodres.microservice.db.mysql:
+  org-foodres-microservice-db:
+    external: true
+  org-foodres-microservice-be:
     external: true
